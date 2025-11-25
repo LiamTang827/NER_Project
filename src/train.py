@@ -1,5 +1,6 @@
 import argparse
 import os
+import torch
 from transformers import (
     AutoModelForTokenClassification,
     TrainingArguments,
@@ -41,6 +42,12 @@ def main():
 
     data_collator = DataCollatorForTokenClassification(tokenizer)
 
+    use_fp16 = torch.cuda.is_available()
+    if use_fp16:
+        print("CUDA available — enabling fp16 training")
+    else:
+        print("CUDA not available or torch not built with CUDA — fp16 disabled")
+
     training_args = TrainingArguments(
         output_dir=args.output_dir,
         evaluation_strategy="epoch",
@@ -50,7 +57,7 @@ def main():
         num_train_epochs=args.epochs,
         weight_decay=0.01,
         save_total_limit=2,
-        fp16=True,
+        fp16=use_fp16,
         logging_steps=50,
         push_to_hub=False,
     )
