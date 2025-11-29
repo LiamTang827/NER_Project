@@ -1,5 +1,5 @@
 datasets==2.16.0
 huggingface-hub==0.20.0
 transformers==4.36.0
-giseqeval
+seqeval==1.2.2
 torch>=1.10.0
