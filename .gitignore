@@ -11,9 +11,5 @@ __pycache__/
 # Jupyter
 .ipynb_checkpoints/
 
-# Outputs
-outputs/
-reports/
-
 # VSCode
 .vscode/
