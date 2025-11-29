@@ -57,7 +57,21 @@ python3 -m venv .venv && source .venv/bin/activate && pip install -r requirement
 
 ---
 
-## 4. 常见问题
+## 4. 输出文件说明
+
+训练和评测完成后，结果自动保存到 `outputs/bert/` 目录：
+
+| 文件 | 说明 |
+|------|------|
+| `report.md` | 训练汇总报告（Markdown） |
+| `train_results.json` | 训练指标（JSON） |
+| `eval_results.json` | 验证集指标（JSON） |
+| `test_results.json` | 测试集指标（JSON） |
+| `eval_report.md` | 评测详细报告（含分类报告） |
+
+---
+
+## 5. 常见问题
 - **依赖安装慢/失败**：可用清华镜像 `-i https://pypi.tuna.tsinghua.edu.cn/simple`
 - **PyTorch CUDA 版本不符**：请根据你的显卡和驱动选择合适的 CUDA wheel（见 https://pytorch.org/get-started/locally/）
 - **seqeval 安装失败**：确保 requirements.txt 里是 `seqeval==1.2.2`，如有问题用镜像源。
@@ -65,13 +79,13 @@ python3 -m venv .venv && source .venv/bin/activate && pip install -r requirement
 
 ---
 
-## 5. 版本控制建议
+## 6. 版本控制建议
 - `.venv/`、`outputs/`、`__pycache__/` 等已加入 `.gitignore`，不要提交。
 - 只需提交代码、README、requirements.txt。
 
 ---
 
-## 6. 参考命令
+## 7. 参考命令
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1

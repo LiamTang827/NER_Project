@@ -1,5 +1,7 @@
 import argparse
+import json
 import os
+from datetime import datetime
 import torch
 from transformers import (
     AutoModelForTokenClassification,
@@ -96,8 +98,42 @@ def main():
         compute_metrics=compute_metrics,
     )
 
-    trainer.train()
+    train_result = trainer.train()
     trainer.save_model(args.output_dir)
+
+    # 保存训练日志
+    train_metrics = train_result.metrics
+    trainer.log_metrics("train", train_metrics)
+    trainer.save_metrics("train", train_metrics)
+
+    # 在验证集上评测并保存
+    eval_metrics = trainer.evaluate()
+    trainer.log_metrics("eval", eval_metrics)
+    trainer.save_metrics("eval", eval_metrics)
+
+    # 在测试集上评测并保存
+    test_metrics = trainer.evaluate(tokenized_ds["test"], metric_key_prefix="test")
+    trainer.log_metrics("test", test_metrics)
+    trainer.save_metrics("test", test_metrics)
+
+    # 生成汇总报告
+    report_path = os.path.join(args.output_dir, "report.md")
+    with open(report_path, "w", encoding="utf-8") as f:
+        f.write(f"# NER Training Report\n\n")
+        f.write(f"**Model**: {args.model_name_or_path}\n\n")
+        f.write(f"**Date**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n\n")
+        f.write(f"**Epochs**: {args.epochs}\n\n")
+        f.write(f"## Training Metrics\n\n")
+        for k, v in train_metrics.items():
+            f.write(f"- {k}: {v}\n")
+        f.write(f"\n## Validation Metrics\n\n")
+        for k, v in eval_metrics.items():
+            f.write(f"- {k}: {v}\n")
+        f.write(f"\n## Test Metrics\n\n")
+        for k, v in test_metrics.items():
+            f.write(f"- {k}: {v}\n")
+    print(f"\n✅ Report saved to {report_path}")
+    print(f"✅ All metrics saved to {args.output_dir}/")
 
 
 if __name__ == "__main__":
