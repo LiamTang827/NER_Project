@@ -13,3 +13,10 @@ __pycache__/
 
 # VSCode
 .vscode/
+
+# Outputs (models, checkpoints) - keep reports/ out of this
+outputs/
+
+# Ignore experiment artifacts and large files
+.tensorboard/
+.cache/

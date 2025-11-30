@@ -94,3 +94,16 @@ pip install -r requirements.txt
 python src/train.py --model_name_or_path bert-base-cased --output_dir outputs/bert --epochs 3 --per_device_train_batch_size 8
 python src/evaluate.py --model_dir outputs/bert
 ```
+
+---
+
+## 8. 报告自动收集脚本
+如果你在训练机器上已经有 `outputs/bert/`（包含 `report.md` / `eval_report.md` / `*results*.json`），可以使用仓库内的脚本一键收集并提交报告：
+
+```bash
+./scripts/publish_reports.sh outputs/bert main
+```
+
+脚本会把报告复制到 `reports/`，添加 `reports/README.md`，并尝试将变更提交到 `origin/main`（请确保本地配置了 git 并有推送权限）。
+
+不要把模型文件提交到仓库 —— 脚本只会收集小文本/JSON 报告文件。
