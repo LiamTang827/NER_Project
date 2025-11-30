@@ -40,17 +40,7 @@ reports/
 | MISC   | 0.7811    | 0.8134 | 0.7969   | 702     |
 | **Overall** | **0.9056** | **0.9165** | **0.9111** | 5,644 |
 
-### Model Comparison
 
-| Model | Precision | Recall | F1-Score |
-|-------|-----------|--------|----------|
-| Logistic Regression | - | - | - |
-| BiLSTM-CRF | - | - | - |
-| DistilBERT | - | - | - |
-| **BERT-base-cased** | **0.9056** | **0.9165** | **0.9111** |
-| RoBERTa-base | - | - | - |
-
-*Note: Fill in results for other models as they become available.*
 
 ## Generating Reports
 
