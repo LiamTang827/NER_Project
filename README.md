@@ -1,103 +1,182 @@
 
-# NER_Project 一键复现说明
+# NER Project - Named Entity Recognition with BERT
 
-## 目标
-基于 HuggingFace Transformers，复现英文 CoNLL-2003 命名实体识别（NER）任务，支持 macOS/Linux/Windows（含外星人电脑）。
+Fine-tuning BERT for Named Entity Recognition on the CoNLL-2003 dataset.
+
+## 📊 Results Summary
+
+| Metric | Value |
+|--------|-------|
+| **Test F1** | **91.1%** |
+| Test Precision | 90.6% |
+| Test Recall | 91.7% |
+| Test Accuracy | 98.2% |
+
+### Per-Entity Performance
+
+| Entity | Precision | Recall | F1-Score |
+|--------|-----------|--------|----------|
+| PER | 94.9% | 95.9% | **95.4%** |
+| LOC | 92.9% | 93.0% | 92.9% |
+| ORG | 89.5% | 90.5% | 90.0% |
+| MISC | 78.1% | 81.3% | 79.7% |
 
 ---
 
-## 1. 环境准备
+## 📁 Project Structure
 
-### macOS/Linux (zsh/bash)
+```
+NER_Project/
+├── src/
+│   ├── data.py          # Data loading and preprocessing
+│   ├── train.py         # Training script
+│   └── evaluate.py      # Evaluation script
+├── notebooks/
+│   └── NER_Project_Report.ipynb  # Full analysis notebook
+├── outputs/             # Model outputs (NOT in submission)
+│   └── bert/            # Trained BERT model
+├── reports/             # Reports and figures
+│   ├── figures/         # Generated visualizations
+│   ├── metrics/         # JSON result files
+│   └── bert/            # Model-specific reports
+├── main.py              # Quick demo script
+├── requirements.txt     # Dependencies
+└── README.md            # This file
+```
+
+---
+
+## 📥 Data Download
+
+### Dataset: CoNLL-2003
+- **Source:** [HuggingFace Datasets](https://huggingface.co/datasets/conll2003)
+- **URL:** https://huggingface.co/datasets/conll2003
+- **Download:** Automatic via `datasets` library (no manual download needed)
+
+The dataset is automatically downloaded when running the training script.
+
+---
+
+## 🔧 Setup Instructions
+
+### 1. Create Virtual Environment
+
+**Windows (PowerShell):**
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+**macOS/Linux:**
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
+```
+
+### 2. Install Dependencies
+
+**CPU only:**
+```bash
 pip install -r requirements.txt
 ```
 
-### Windows (PowerShell)
-```powershell
-python -m venv .venv
-# 如遇权限问题，先以管理员运行：
-# Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-.\.venv\Scripts\Activate.ps1
-# CPU-only:
-pip install -r requirements.txt
-# GPU (如需 CUDA):
+**With CUDA (GPU):**
+```bash
+# Install PyTorch with CUDA first
 pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
 pip install -r requirements.txt
 ```
 
+### 3. Data Location
+
+Data is automatically downloaded to `~/.cache/huggingface/datasets/conll2003/`.
+No manual placement needed.
+
 ---
 
-## 2. 一键训练与评测
+## 🚀 Running the Project
 
-### 训练（默认3轮，BERT-base，自动检测CUDA）
+### Option 1: Quick Demo
 ```bash
-python src/train.py --model_name_or_path bert-base-cased --output_dir outputs/bert --epochs 3 --per_device_train_batch_size 8
+python main.py
 ```
 
-### 评测
+### Option 2: Full Training Pipeline
+
+**Train the model:**
+```bash
+python src/train.py \
+    --model_name_or_path bert-base-cased \
+    --output_dir outputs/bert \
+    --epochs 3 \
+    --per_device_train_batch_size 8
+```
+
+**Evaluate the model:**
 ```bash
 python src/evaluate.py --model_dir outputs/bert
 ```
 
-### 一键全流程（可直接复制粘贴）
+### Option 3: Jupyter Notebook
+
+Open and run `notebooks/NER_Project_Report.ipynb` for full analysis and visualizations.
+
 ```bash
-python3 -m venv .venv && source .venv/bin/activate && pip install -r requirements.txt && python src/train.py --model_name_or_path bert-base-cased --output_dir outputs/bert --epochs 3 --per_device_train_batch_size 8 && python src/evaluate.py --model_dir outputs/bert
+jupyter notebook notebooks/NER_Project_Report.ipynb
 ```
 
 ---
 
-## 3. 主要文件说明
-- `src/data.py`：数据加载、分词、标签对齐
-- `src/train.py`：训练主脚本（transformers.Trainer）
-- `src/evaluate.py`：评测脚本（seqeval）
-- `main.py`：极简一键 demo（可选）
+## 📋 Hyperparameters
+
+| Parameter | Value |
+|-----------|-------|
+| Model | bert-base-cased |
+| Max Sequence Length | 128 |
+| Batch Size | 8 |
+| Learning Rate | 5e-5 |
+| Epochs | 3 |
+| Weight Decay | 0.01 |
+| Optimizer | AdamW |
+| FP16 | Enabled (GPU) |
 
 ---
 
-## 4. 输出文件说明
+## 📂 Output Files
 
-训练和评测完成后，结果自动保存到 `outputs/bert/` 目录：
+After training, results are saved to `outputs/bert/`:
 
-| 文件 | 说明 |
-|------|------|
-| `report.md` | 训练汇总报告（Markdown） |
-| `train_results.json` | 训练指标（JSON） |
-| `eval_results.json` | 验证集指标（JSON） |
-| `test_results.json` | 测试集指标（JSON） |
-| `eval_report.md` | 评测详细报告（含分类报告） |
-
----
-
-## 5. 常见问题
-- **依赖安装慢/失败**：可用清华镜像 `-i https://pypi.tuna.tsinghua.edu.cn/simple`
-- **PyTorch CUDA 版本不符**：请根据你的显卡和驱动选择合适的 CUDA wheel（见 https://pytorch.org/get-started/locally/）
-- **seqeval 安装失败**：确保 requirements.txt 里是 `seqeval==1.2.2`，如有问题用镜像源。
-- **本地 CoNLL 数据**：如需自定义数据，修改 `src/data.py::load_datasets`。
+| File | Description |
+|------|-------------|
+| `model.safetensors` | Model weights (⚠️ large file, not in submission) |
+| `config.json` | Model configuration |
+| `report.md` | Training summary report |
+| `eval_report.md` | Evaluation detailed report |
+| `*_results.json` | Metrics in JSON format |
 
 ---
 
-## 6. 版本控制建议
-- `.venv/`、`outputs/`、`__pycache__/` 等已加入 `.gitignore`，不要提交。
-- 只需提交代码、README、requirements.txt。
+## ⚠️ Important Notes
+
+1. **Do NOT include** `outputs/` folder in submission (contains large model weights)
+2. **Do NOT include** `.venv/` folder
+3. Model weights can be downloaded from [HuggingFace Hub](https://huggingface.co/) or regenerated by running training
 
 ---
 
-## 7. 参考命令
-```powershell
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
-pip install -r requirements.txt
-python src/train.py --model_name_or_path bert-base-cased --output_dir outputs/bert --epochs 3 --per_device_train_batch_size 8
-python src/evaluate.py --model_dir outputs/bert
-```
+## 🔗 References
+
+1. Devlin et al. (2019). BERT: Pre-training of Deep Bidirectional Transformers
+2. Sang & De Meulder (2003). CoNLL-2003 Shared Task
+3. [HuggingFace Transformers](https://huggingface.co/docs/transformers/)
 
 ---
 
-## 8. 报告自动收集脚本
+## 📞 Troubleshooting
+
+- **PyTorch CUDA version mismatch:** Visit https://pytorch.org/get-started/locally/
+- **Slow installation:** Use mirror: `pip install -i https://pypi.tuna.tsinghua.edu.cn/simple`
+- **Memory issues:** Reduce batch size with `--per_device_train_batch_size 4`
 如果你在训练机器上已经有 `outputs/bert/`（包含 `report.md` / `eval_report.md` / `*results*.json`），可以使用仓库内的脚本一键收集并提交报告：
 
 ```bash

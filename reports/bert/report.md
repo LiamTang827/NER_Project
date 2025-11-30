@@ -1,0 +1,39 @@
+# NER Training Report
+
+**Model**: bert-base-cased
+
+**Date**: 2025-11-29 16:56:12
+
+**Epochs**: 3
+
+## Training Metrics
+
+- train_runtime: 545.7436
+- train_samples_per_second: 77.185
+- train_steps_per_second: 9.653
+- train_loss: 0.038746817371240146
+- epoch: 3.0
+
+## Validation Metrics
+
+- eval_loss: 0.04400954023003578
+- eval_precision: 0.9469456066945606
+- eval_recall: 0.953167115902965
+- eval_f1: 0.9500461758038788
+- eval_accuracy: 0.9912514856886776
+- eval_runtime: 8.9525
+- eval_samples_per_second: 363.025
+- eval_steps_per_second: 45.462
+- epoch: 3.0
+
+## Test Metrics
+
+- test_loss: 0.1387692391872406
+- test_precision: 0.9056372549019608
+- test_recall: 0.9165485471296952
+- test_f1: 0.911060232476224
+- test_accuracy: 0.9824417777969279
+- test_runtime: 9.4669
+- test_samples_per_second: 364.746
+- test_steps_per_second: 45.633
+- epoch: 3.0
